@@ -1,24 +1,114 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, type ComponentType } from "react";
+import { AppShell } from "@/components/AppShell";
+import { CoinFlip, GoldenWheel, ScratchCards, VaultBoxes } from "@/components/games/EasyGames";
+import { HorseRacing, MemeCoin, Slots } from "@/components/games/SignatureGames";
+import { CardTable, Roulette } from "@/components/games/ClassicGames";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Billionaire Speedrun — Fake Fortune, Real Dopamine" },
+      {
+        name: "description",
+        content:
+          "A free, no-signup novelty simulator: play rigged fake-money casino games, inflate an imaginary net worth, then blow it in a fantasy luxury vault.",
+      },
+      { property: "og:title", content: "Billionaire Speedrun — Fake Fortune, Real Dopamine" },
+      {
+        property: "og:description",
+        content: "Rigged-in-your-favour fake casino games and an absurd luxury catalog. Nothing is real.",
+      },
+    ],
+  }),
+  component: CasinoPage,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+type GameDef = {
+  key: string;
+  name: string;
+  blurb: string;
+  emoji: string;
+  Component: ComponentType<{ open: boolean; onOpenChange: (v: boolean) => void }>;
+};
+
+const TIERS: { title: string; desc: string; games: GameDef[] }[] = [
+  {
+    title: "Easy Money",
+    desc: "No casino knowledge required. Tap, win, repeat.",
+    games: [
+      { key: "scratch", name: "Diamond Scratch Cards", blurb: "Three panels, one smug grin.", emoji: "💎", Component: ScratchCards },
+      { key: "wheel", name: "Golden Wheel of Fortune", blurb: "One tap, up to 25×.", emoji: "🎡", Component: GoldenWheel },
+      { key: "coin", name: "Double-or-Nothing Flip", blurb: "Heads or tails, mostly heads.", emoji: "🪙", Component: CoinFlip },
+      { key: "boxes", name: "Mystery Vault Boxes", blurb: "Four doors, all of them pay.", emoji: "🚪", Component: VaultBoxes },
+    ],
+  },
+  {
+    title: "Signature Spectacle",
+    desc: "The main event. Loud, shiny, absurd.",
+    games: [
+      { key: "slots", name: "High-Roller Slots", blurb: "Jets, diamonds, cascading wins.", emoji: "🎰", Component: Slots },
+      { key: "horses", name: "VIP Horse Racing", blurb: "Six seconds of thunderous nonsense.", emoji: "🏇", Component: HorseRacing },
+      { key: "coins", name: "Meme Coin Desk", blurb: "Ape in, cash out at the top.", emoji: "📈", Component: MemeCoin },
+    ],
+  },
+  {
+    title: "High-Roller Classics",
+    desc: "For people who know what a croupier is.",
+    games: [
+      { key: "roulette", name: "Private Club Roulette", blurb: "Single zero and a boosted all-in.", emoji: "🔴", Component: Roulette },
+      { key: "cards", name: "Baccarat & Blackjack", blurb: "One hand. Dealer busts a lot.", emoji: "🃏", Component: CardTable },
+    ],
+  },
+];
+
+function CasinoPage() {
+  const [openGame, setOpenGame] = useState<string | null>(null);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <AppShell>
+      <section className="surface relative overflow-hidden p-6">
+        <h1 className="font-display text-3xl leading-tight sm:text-4xl">
+          Get obscenely rich.{" "}
+          <span className="text-gradient-gold">None of it is real.</span>
+        </h1>
+        <p className="mt-2 max-w-lg text-sm text-silver">
+          Free, no signup, no deposits, nothing to withdraw. The games are rigged in your favour on
+          purpose — that's the entire joke.
+        </p>
+      </section>
+
+      {TIERS.map((tier) => (
+        <section key={tier.title} className="mt-8">
+          <h2 className="font-display text-2xl">{tier.title}</h2>
+          <p className="text-xs text-silver">{tier.desc}</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {tier.games.map((g) => (
+              <button
+                key={g.key}
+                onClick={() => setOpenGame(g.key)}
+                className="surface flex items-center gap-4 p-4 text-left transition-transform active:scale-[0.99] hover:border-gold/40"
+              >
+                <span className="grid size-12 shrink-0 place-items-center rounded-full bg-emerald-deep/40 text-2xl">
+                  {g.emoji}
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-base text-platinum">{g.name}</span>
+                  <span className="block text-xs text-silver">{g.blurb}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {TIERS.flatMap((t) => t.games).map(({ key, Component }) => (
+        <Component
+          key={key}
+          open={openGame === key}
+          onOpenChange={(v) => setOpenGame(v ? key : null)}
+        />
+      ))}
+    </AppShell>
   );
 }

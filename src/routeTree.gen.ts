@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmpireRouteImport } from './routes/empire'
 import { Route as VaultRouteImport } from './routes/vault'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmpireRoute = EmpireRouteImport.update({
+  id: '/empire',
+  path: '/empire',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VaultRoute = VaultRouteImport.update({
@@ -25,27 +31,31 @@ const VaultRoute = VaultRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/empire': typeof EmpireRoute
   '/vault': typeof VaultRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/empire': typeof EmpireRoute
   '/vault': typeof VaultRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/empire': typeof EmpireRoute
   '/vault': typeof VaultRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/vault'
+  fullPaths: '/' | '/empire' | '/vault'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/vault'
-  id: '__root__' | '/' | '/vault'
+  to: '/' | '/empire' | '/vault'
+  id: '__root__' | '/' | '/empire' | '/vault'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmpireRoute: typeof EmpireRoute
   VaultRoute: typeof VaultRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/empire': {
+      id: '/empire'
+      path: '/empire'
+      fullPath: '/empire'
+      preLoaderRoute: typeof EmpireRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vault': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmpireRoute: EmpireRoute,
   VaultRoute: VaultRoute,
 }
 export const routeTree = rootRouteImport
