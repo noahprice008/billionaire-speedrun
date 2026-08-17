@@ -20,6 +20,16 @@
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
+  --font-display: "Fraunces", "Playfair Display", serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --color-obsidian: var(--obsidian);
+  --color-charcoal: var(--charcoal);
+  --color-gold: var(--gold-primary);
+  --color-gold-bright: var(--gold-bright);
+  --color-emerald-deep: var(--emerald-deep);
+  --color-platinum: var(--platinum);
+  --color-silver: var(--silver-muted);
+  --color-ruby: var(--ruby-rare);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
