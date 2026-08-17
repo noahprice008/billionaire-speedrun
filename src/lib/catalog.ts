@@ -6,6 +6,7 @@ export type VaultItem = {
   category: CategoryId;
   image: string;
   rare?: boolean;
+  featured?: boolean;
 };
 
 export type CategoryId =
@@ -14,13 +15,15 @@ export type CategoryId =
   | "cars"
   | "fragrance"
   | "estate"
-  | "art";
+  | "art"
+  | "beauty";
 
 export const CATEGORIES: { id: CategoryId; label: string; emoji: string }[] = [
   { id: "couture", label: "Haute Couture", emoji: "🧵" },
   { id: "jewelry", label: "Jewelry & Timepieces", emoji: "💎" },
   { id: "cars", label: "Supercars & Hypercars", emoji: "🏎️" },
   { id: "fragrance", label: "Artisanal Fragrance", emoji: "🫧" },
+  { id: "beauty", label: "Make-Up & Beauty", emoji: "💄" },
   { id: "estate", label: "Real Estate & Extravagance", emoji: "🏝️" },
   { id: "art", label: "Fine Art", emoji: "🖼️" },
 ];
@@ -59,4 +62,19 @@ export const VAULT_ITEMS: VaultItem[] = [
   { id: "a2", name: "Monumental Marble Sculpture", blurb: "Requires reinforcing your floors. Do it.", price: 34_000_000, category: "art", image: img("photo-1578321272176-b7bbc0679853") },
   { id: "a3", name: "Abstract Canvas, Very Large", blurb: "It's about capitalism, apparently.", price: 18_500_000, category: "art", image: img("photo-1541961017774-22349e4a1262") },
   { id: "a4", name: "Ancient Gilded Relic", blurb: "Provenance: complicated. Vibes: immaculate.", price: 210_000_000, category: "art", rare: true, image: img("photo-1580136579312-94651dfd596d") },
+  // Make-Up & Beauty
+  { id: "b1", name: "Diamond-Dust Highlighter", blurb: "Glow visible from low earth orbit.", price: 260_000, category: "beauty", image: img("photo-1596462502278-27bfdc403348") },
+  { id: "b2", name: "24k Gold Leaf Facial Ritual", blurb: "Your face, but richer than you.", price: 890_000, category: "beauty", image: img("photo-1570172619644-dfd03ed5d881") },
+  { id: "b3", name: "Couture Lipstick in a Carved Ruby Case", blurb: "One shade. It is called 'Rent'.", price: 1_150_000, category: "beauty", image: img("photo-1586495777744-4413f21062fa") },
+  { id: "b4", name: "Bespoke Palette, Mixed to Your Aura", blurb: "A colourist flew in. She has opinions.", price: 640_000, category: "beauty", image: img("photo-1512496015851-a90fb38ba796") },
+  { id: "b5", name: "Caviar Regeneration Serum, Lifetime Supply", blurb: "Ageing is for people with jobs.", price: 3_900_000, category: "beauty", image: img("photo-1620916566398-39f1143ab7be") },
+  { id: "b6", name: "Private Glam Squad on Permanent Retainer", blurb: "They arrive before you wake up. Unsettling.", price: 14_000_000, category: "beauty", rare: true, image: img("photo-1522337360788-8b13dee7a37e") },
+
+  // The Exclusive Collection — featured
+  { id: "x1", name: "The Obsidian Key — Members-Only Everything", blurb: "One key. Every door. No explanation offered.", price: 500_000_000, category: "estate", rare: true, featured: true, image: img("photo-1613490493576-7fde63acd811") },
+  { id: "x2", name: "Solitaire Necklace, Vault Release No. 001", blurb: "Kept behind three doors and one very tired guard.", price: 74_000_000, category: "jewelry", rare: true, featured: true, image: img("photo-1599643478518-a784e5dc4c8f") },
+  { id: "x3", name: "The Midnight Elixir — Fragrance, One of One", blurb: "Composed once, then the formula was burned.", price: 9_500_000, category: "fragrance", rare: true, featured: true, image: img("photo-1547887538-e3a2f32cb1cc") },
+  { id: "x4", name: "Atelier Couture Set, Beauty & Gown", blurb: "Arrives with a stylist and a small orchestra.", price: 31_000_000, category: "beauty", rare: true, featured: true, image: img("photo-1487412720507-e7ab37603c6f") },
 ];
+
+export const FEATURED_ITEMS: VaultItem[] = VAULT_ITEMS.filter((i) => i.featured);
