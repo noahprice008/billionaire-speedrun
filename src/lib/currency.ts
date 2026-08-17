@@ -27,7 +27,11 @@ export function abbreviate(n: number) {
   return Math.round(n).toString();
 }
 
-export function formatMoney(usd: number, code: CurrencyCode, opts?: { short?: boolean }) {
+export function formatMoney(
+  usd: number,
+  code: CurrencyCode,
+  opts?: { short?: boolean | undefined },
+) {
   const value = convert(usd, code);
   const { symbol } = CURRENCIES[code];
   if (opts?.short) return `${symbol}${abbreviate(value)}`;
