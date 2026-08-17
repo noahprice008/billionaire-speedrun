@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Billionaire Speedrun — Fake Fortune, Real Dopamine" },
       {
         property: "og:description",
-        content: "Rigged-in-your-favour fake casino games and an absurd luxury catalog. Nothing is real.",
+        content: "A free, no-signup novelty simulator: play rigged fake-money casino games, inflate an imaginary net worth, then blow it in a fantasy luxury vault.",
       },
     ],
   }),

@@ -82,13 +82,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "A free novelty simulator: rigged fake-money casino games and an absurd luxury vault. Nothing real, nothing to withdraw.",
+          "A free, no-signup novelty simulator: play rigged fake-money casino games, inflate an imaginary net worth, then blow it in a fantasy luxury vault.",
       },
-      { property: "og:title", content: "Billionaire Speedrun" },
-      { property: "og:description", content: "Build a completely fictional fortune, at speed." },
+      { property: "og:title", content: "Billionaire Speedrun — Fake Fortune, Real Dopamine" },
+      { property: "og:description", content: "A free, no-signup novelty simulator: play rigged fake-money casino games, inflate an imaginary net worth, then blow it in a fantasy luxury vault." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Billionaire Speedrun — Fake Fortune, Real Dopamine" },
+      { name: "twitter:description", content: "A free, no-signup novelty simulator: play rigged fake-money casino games, inflate an imaginary net worth, then blow it in a fantasy luxury vault." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e22b41afa84c60a06f26e226000f5af7/id-preview-220ba1a7--da1bf9b2-4249-4a21-b4db-fcb3b0d078ae.lovable.app-1786999332338.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e22b41afa84c60a06f26e226000f5af7/id-preview-220ba1a7--da1bf9b2-4249-4a21-b4db-fcb3b0d078ae.lovable.app-1786999332338.png" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
