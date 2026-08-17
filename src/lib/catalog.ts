@@ -71,7 +71,7 @@ export const VAULT_ITEMS: VaultItem[] = [
   { id: "b6", name: "Private Glam Squad on Permanent Retainer", blurb: "They arrive before you wake up. Unsettling.", price: 14_000_000, category: "beauty", rare: true, image: img("photo-1522337360788-8b13dee7a37e") },
 
   // The Exclusive Collection — featured
-  { id: "x1", name: "The Obsidian Key — Members-Only Everything", blurb: "One key. Every door. No explanation offered.", price: 500_000_000, category: "estate", rare: true, featured: true, image: img("photo-1600880292203-757bb62b4baf") },
+  { id: "x1", name: "The Obsidian Key — Members-Only Everything", blurb: "One key. Every door. No explanation offered.", price: 500_000_000, category: "estate", rare: true, featured: true, image: img("photo-1613490493576-7fde63acd811") },
   { id: "x2", name: "Solitaire Necklace, Vault Release No. 001", blurb: "Kept behind three doors and one very tired guard.", price: 74_000_000, category: "jewelry", rare: true, featured: true, image: img("photo-1599643478518-a784e5dc4c8f") },
   { id: "x3", name: "The Midnight Elixir — Fragrance, One of One", blurb: "Composed once, then the formula was burned.", price: 9_500_000, category: "fragrance", rare: true, featured: true, image: img("photo-1547887538-e3a2f32cb1cc") },
   { id: "x4", name: "Atelier Couture Set, Beauty & Gown", blurb: "Arrives with a stylist and a small orchestra.", price: 31_000_000, category: "beauty", rare: true, featured: true, image: img("photo-1487412720507-e7ab37603c6f") },
