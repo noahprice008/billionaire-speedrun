@@ -4,6 +4,7 @@ import { AppShell } from "@/components/AppShell";
 import { CoinFlip, GoldenWheel, ScratchCards, VaultBoxes } from "@/components/games/EasyGames";
 import { HorseRacing, MemeCoin, Slots } from "@/components/games/SignatureGames";
 import { CardTable, Roulette } from "@/components/games/ClassicGames";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -67,12 +68,22 @@ function CasinoPage() {
 
   return (
     <AppShell>
-      <section className="surface relative overflow-hidden p-6">
-        <h1 className="font-display text-3xl leading-tight sm:text-4xl">
+      <section className="surface-lux relative overflow-hidden p-6 text-center sm:text-left">
+        <img
+          src={logo}
+          alt="Billionaire Speedrun crowned diamond logo"
+          width={816}
+          height={816}
+          className="mx-auto size-24 object-contain drop-shadow-[0_0_28px_oklch(0.64_0.22_328/0.45)] sm:absolute sm:top-4 sm:right-5 sm:size-32"
+        />
+        <p className="mt-3 text-[10px] tracking-[0.35em] text-orchid uppercase sm:mt-0">
+          Billionaire Speedrun
+        </p>
+        <h1 className="mt-2 font-display text-4xl leading-[1.05] tracking-tight sm:max-w-lg sm:text-5xl">
           Get obscenely rich.{" "}
-          <span className="text-gradient-gold">None of it is real.</span>
+          <span className="text-gradient-lux">None of it is real.</span>
         </h1>
-        <p className="mt-2 max-w-lg text-sm text-silver">
+        <p className="mt-3 max-w-lg text-sm text-silver">
           Free, no signup, no deposits, nothing to withdraw. The games are rigged in your favour on
           purpose — that's the entire joke.
         </p>

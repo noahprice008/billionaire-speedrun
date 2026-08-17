@@ -8,6 +8,7 @@ import { LANGUAGES, type LangCode } from "@/lib/i18n";
 import { AboutDialog } from "@/components/AboutDialog";
 import { SiteFooter } from "@/components/SiteFooter";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 const TABS = [
   { to: "/", key: "casino", label: "Casino", Icon: Dice5 },
@@ -60,13 +61,17 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-charcoal/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <span className="grid size-8 shrink-0 place-items-center rounded-full border border-gold/40 text-gold">
-              ♠
-            </span>
-            <span className="hidden font-display text-sm leading-tight font-semibold sm:block">
+            <img
+              src={logo}
+              alt="Billionaire Speedrun logo"
+              width={816}
+              height={816}
+              className="size-9 shrink-0 object-contain"
+            />
+            <span className="hidden font-display text-sm leading-tight font-semibold tracking-tight sm:block">
               Billionaire
               <br />
-              Speedrun
+              <span className="text-gradient-lux">Speedrun</span>
             </span>
           </Link>
 
