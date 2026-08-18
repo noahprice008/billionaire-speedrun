@@ -5,6 +5,7 @@ import { Money } from "@/components/Money";
 import { Particles } from "@/components/Particles";
 import { CATEGORIES, FEATURED_ITEMS, VAULT_ITEMS, type CategoryId, type VaultItem } from "@/lib/catalog";
 import { useEmpire } from "@/lib/store";
+import { playSound } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/vault")({
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/vault")({
 });
 
 function VaultPage() {
-  const { state, purchase } = useEmpire();
+  const { state, addToCart } = useEmpire();
   const [filter, setFilter] = useState<CategoryId | "all">("all");
   const [burst, setBurst] = useState<string | null>(null);
 
@@ -40,17 +41,16 @@ function VaultPage() {
   );
 
   const buy = (item: VaultItem) => {
-    const ok = purchase({
+    addToCart({
       id: item.id,
       name: item.name,
       image: item.image,
       price: item.price,
       category: item.category,
     });
-    if (ok) {
-      setBurst(item.id);
-      setTimeout(() => setBurst(null), 1000);
-    }
+    playSound("click", state.sound);
+    setBurst(item.id);
+    setTimeout(() => setBurst(null), 1000);
   };
 
   return (
@@ -72,7 +72,7 @@ function VaultPage() {
         <p className="mt-1 text-xs text-silver">
           Four pieces released once, entirely imaginary, absurdly expensive.
         </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {FEATURED_ITEMS.map((item) => (
             <ItemCard
               key={item.id}
@@ -97,7 +97,7 @@ function VaultPage() {
         ))}
       </div>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {items.map((item) => (
           <ItemCard
             key={item.id}
@@ -123,6 +123,8 @@ function ItemCard({
   affordable: boolean;
   onBuy: () => void;
 }) {
+  const gallery = item.images?.length ? item.images : [item.image];
+  const [shot, setShot] = useState(0);
   return (
     <article
       className={cn(
@@ -133,11 +135,27 @@ function ItemCard({
       {burst && <Particles kind="confetti" count={30} />}
       <div className="relative aspect-[4/3] overflow-hidden bg-obsidian">
         <img
-          src={item.image}
-          alt={item.name}
+          key={gallery[shot]}
+          src={gallery[shot]}
+          alt={`${item.name} — photo ${shot + 1} of ${gallery.length}`}
           loading="lazy"
-          className="size-full object-cover opacity-90"
+          className="size-full animate-in fade-in object-cover opacity-90 duration-300"
         />
+        {gallery.length > 1 && (
+          <div className="absolute right-2 bottom-2 flex gap-1.5">
+            {gallery.map((g, i) => (
+              <button
+                key={g}
+                aria-label={`View photo ${i + 1}`}
+                onClick={() => setShot(i)}
+                className={cn(
+                  "size-2 rounded-full border border-obsidian/40 transition-colors",
+                  i === shot ? "bg-gold" : "bg-platinum/40",
+                )}
+              />
+            ))}
+          </div>
+        )}
         {item.featured ? (
           <span className="absolute top-2 left-2 rounded-full bg-orchid px-2 py-0.5 text-[10px] tracking-wider text-obsidian uppercase">
             Exclusive
@@ -150,22 +168,22 @@ function ItemCard({
           )
         )}
       </div>
-      <div className="space-y-2 p-4">
-        <h3 className="font-display text-lg leading-snug">{item.name}</h3>
-        <p className="text-xs text-silver">{item.blurb}</p>
-        <div className="flex items-center justify-between gap-2 pt-1">
-          <Money usd={item.price} className="font-display text-base text-gold" />
+      <div className="space-y-2 p-3 sm:p-4">
+        <h3 className="font-display text-sm leading-snug sm:text-lg">{item.name}</h3>
+        <p className="text-[11px] text-silver sm:text-xs">{item.blurb}</p>
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <Money usd={item.price} className="font-display text-sm text-gold sm:text-base" />
           <button
             disabled={!affordable}
             onClick={onBuy}
             className={cn(
-              "shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition-colors",
+              "shrink-0 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors sm:px-4 sm:py-2 sm:text-xs",
               affordable
                 ? "bg-gold text-obsidian hover:bg-gold-bright"
                 : "cursor-not-allowed border border-border text-silver",
             )}
           >
-            {affordable ? "Add to Empire" : "Win more first 💰"}
+            {affordable ? "Add to basket" : "Win more first 💰"}
           </button>
         </div>
       </div>
