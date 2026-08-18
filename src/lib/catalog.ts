@@ -5,6 +5,7 @@ export type VaultItem = {
   price: number;
   category: CategoryId;
   image: string;
+  images?: string[];
   rare?: boolean;
   featured?: boolean;
 };
@@ -31,7 +32,18 @@ export const CATEGORIES: { id: CategoryId; label: string; emoji: string }[] = [
 const img = (id: string, w = 800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=70`;
 
-export const VAULT_ITEMS: VaultItem[] = [
+/** Extra gallery photography per category — generic, unbranded, free-licence stock. */
+const GALLERY: Record<CategoryId, string[]> = {
+  couture: ["photo-1490114538077-0a7f8cb49891", "photo-1558769132-cb1aea458c5e", "photo-1483985988355-763728e1935b"],
+  jewelry: ["photo-1605100804763-247f67b3557e", "photo-1573408301185-9146fe634ad0", "photo-1602173574767-37ac01994b2a"],
+  cars: ["photo-1494976388531-d1058494cdd8", "photo-1583121274602-3e2820c69888", "photo-1553440569-bcc63803a83d"],
+  fragrance: ["photo-1523293182086-7651a899d37f", "photo-1594035910387-fea47794261f", "photo-1608528577891-eb055944f2e7"],
+  beauty: ["photo-1631730359585-38a4935cbec4", "photo-1487412947147-5cebf100ffc2", "photo-1596704017254-9b121068fb31"],
+  estate: ["photo-1505881502353-a1986add3762", "photo-1540541338287-41700207dee6", "photo-1493857671505-72967e2e2760"],
+  art: ["photo-1531913764164-f85c52e6e654", "photo-1544967082-d9d25d867d66", "photo-1554907984-15263bfd63bd"],
+};
+
+const BASE_ITEMS: VaultItem[] = [
   // Haute Couture
   { id: "c1", name: "Hand-Stitched Midnight Tuxedo", blurb: "Sewn by candlelight by someone who resents you.", price: 180_000, category: "couture", image: img("photo-1594938298603-c8148c4dae35") },
   { id: "c2", name: "One-Off Runway Gown", blurb: "Worn once, photographed 400 times, never again.", price: 950_000, category: "couture", image: img("photo-1490481651871-ab68de25d43d") },
@@ -76,5 +88,12 @@ export const VAULT_ITEMS: VaultItem[] = [
   { id: "x3", name: "The Midnight Elixir — Fragrance, One of One", blurb: "Composed once, then the formula was burned.", price: 9_500_000, category: "fragrance", rare: true, featured: true, image: img("photo-1547887538-e3a2f32cb1cc") },
   { id: "x4", name: "Atelier Couture Set, Beauty & Gown", blurb: "Arrives with a stylist and a small orchestra.", price: 31_000_000, category: "beauty", rare: true, featured: true, image: img("photo-1487412720507-e7ab37603c6f") },
 ];
+
+/** Every item gets a small high-resolution gallery: its hero shot plus category detail shots. */
+export const VAULT_ITEMS: VaultItem[] = BASE_ITEMS.map((item, index) => {
+  const pool = GALLERY[item.category];
+  const extras = [pool[index % pool.length]!, pool[(index + 1) % pool.length]!];
+  return { ...item, images: [item.image, ...extras.map((id) => img(id, 1000))] };
+});
 
 export const FEATURED_ITEMS: VaultItem[] = VAULT_ITEMS.filter((i) => i.featured);
