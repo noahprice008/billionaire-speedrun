@@ -6,6 +6,7 @@ import { useEmpire } from "@/lib/store";
 import { CURRENCIES, type CurrencyCode } from "@/lib/currency";
 import { LANGUAGES, type LangCode } from "@/lib/i18n";
 import { AboutDialog } from "@/components/AboutDialog";
+import { CartButton, CartSheet } from "@/components/CartSheet";
 import { SiteFooter } from "@/components/SiteFooter";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
@@ -54,6 +55,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { netWorth, state } = useEmpire();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
@@ -104,6 +106,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="hidden items-center gap-2 sm:flex">
               <Selects />
             </div>
+            <CartButton onClick={() => setCartOpen(true)} />
             <button
               aria-label="Menu"
               onClick={() => setMenuOpen((v) => !v)}
