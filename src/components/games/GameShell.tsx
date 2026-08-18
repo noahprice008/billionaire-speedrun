@@ -1,8 +1,11 @@
 import { useCallback, useState, type ReactNode } from "react";
+import { Volume2, VolumeX } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
 import { Money } from "@/components/Money";
 import { Particles } from "@/components/Particles";
 import { betTiers, useEmpire } from "@/lib/store";
+import { playSound } from "@/lib/sound";
 import { cn } from "@/lib/utils";
 
 export type Settle = (won: boolean, multiplier: number, note?: string) => void;
@@ -22,24 +25,25 @@ export function GameShell({
   subtitle: string;
   children: (props: GameBodyProps) => ReactNode;
 }) {
-  const { state, resolveGame } = useEmpire();
+  const { state, resolveGame, setSound } = useEmpire();
   const tiers = betTiers(state.balance);
   const [bet, setBet] = useState<number>(tiers[0]!);
   const [result, setResult] = useState<{ won: boolean; amount: number; note: string } | null>(null);
 
-  const activeBet = Math.min(bet, Math.max(10_000, state.balance));
+  const activeBet = Math.min(bet, Math.max(1_000, state.balance));
 
   const settle = useCallback<Settle>(
     (won, multiplier, note) => {
       const delta = won ? Math.round(activeBet * multiplier) : -activeBet;
       resolveGame(delta, won);
+      playSound(won ? "win" : "lose", state.sound);
       setResult({
         won,
         amount: Math.abs(delta),
         note: note ?? (won ? "Obscene. Well done." : "The house needed a win. Just one."),
       });
     },
-    [activeBet, resolveGame],
+    [activeBet, resolveGame, state.sound],
   );
 
   const close = (v: boolean) => {
@@ -50,8 +54,28 @@ export function GameShell({
   return (
     <Dialog open={open} onOpenChange={close}>
       <DialogContent className="max-h-[92vh] overflow-y-auto border-border bg-charcoal p-4 sm:max-w-lg">
-        <DialogTitle className="font-display text-xl text-gradient-gold">{title}</DialogTitle>
-        <p className="-mt-2 text-xs text-silver">{subtitle}</p>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <div className="min-w-0">
+            <DialogTitle className="font-display text-xl text-gradient-gold">{title}</DialogTitle>
+            <p className="text-xs text-silver">{subtitle}</p>
+          </div>
+          <label className="flex shrink-0 items-center gap-2 rounded-full border border-border px-2.5 py-1.5">
+            {state.sound ? (
+              <Volume2 className="size-4 text-gold" />
+            ) : (
+              <VolumeX className="size-4 text-silver" />
+            )}
+            <span className="sr-only">Sound</span>
+            <Switch
+              checked={state.sound}
+              onCheckedChange={(v) => {
+                setSound(v);
+                if (v) playSound("click", true);
+              }}
+              aria-label="Toggle game sound"
+            />
+          </label>
+        </div>
 
         <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-xs">
           <span className="text-silver">Balance</span>
