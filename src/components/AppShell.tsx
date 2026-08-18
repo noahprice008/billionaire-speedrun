@@ -168,6 +168,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </nav>
 
       <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} />
+      <CartSheet open={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
   );
 }
