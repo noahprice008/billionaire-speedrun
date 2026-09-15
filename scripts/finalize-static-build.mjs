@@ -33,6 +33,13 @@ if (!existsSync(client)) {
   console.log("[static-build] Flattened dist/client into dist/.");
 }
 
+// SPA mode may emit the shell as `_shell.html`; a static host needs index.html.
+const shell = path.join(dist, "_shell.html");
+if (existsSync(shell) && !existsSync(path.join(dist, "index.html"))) {
+  await cp(shell, path.join(dist, "index.html"));
+  console.log("[static-build] Renamed _shell.html to index.html.");
+}
+
 const indexHtml = path.join(dist, "index.html");
 const notFound = path.join(dist, "404.html");
 if (existsSync(indexHtml)) {

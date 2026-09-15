@@ -26,7 +26,7 @@ export default defineConfig({
         // browser router take over.
         spa: {
           enabled: true,
-          prerender: { enabled: true, crawlLinks: false },
+          prerender: { enabled: true, outputPath: "/index.html", crawlLinks: false },
         },
       }
     : {
