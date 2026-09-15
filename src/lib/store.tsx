@@ -24,7 +24,7 @@ export type OwnedItem = {
   image: string;
   price: number;
   category: string;
-  rare?: boolean;
+  rare?: boolean | undefined;
 };
 
 export type CartLine = OwnedItem & { qty: number };
