@@ -3,6 +3,8 @@ import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { CountUpMoney, Money } from "@/components/Money";
 import { useEmpire } from "@/lib/store";
+import { ACHIEVEMENTS } from "@/lib/achievements";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/empire")({
   head: () => ({
@@ -24,7 +26,7 @@ export const Route = createFileRoute("/empire")({
 });
 
 function EmpirePage() {
-  const { state, netWorth, reset } = useEmpire();
+  const { state, netWorth, reset, unlocked } = useEmpire();
   const [confirming, setConfirming] = useState(false);
 
   return (
@@ -46,6 +48,40 @@ function EmpirePage() {
           value={<Money usd={state.biggestWin} short />}
         />
         <Stat label="Items owned" value={String(state.inventory.length)} />
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Best streak" value={`${state.bestStreak} 🏆`} />
+        <Stat label="Daily streak" value={`${state.bonusStreak} 📅`} />
+        <Stat label="Spent in Vault" value={<Money usd={state.totalSpent} short />} />
+        <Stat label="Milestones" value={`${unlocked.length}/${ACHIEVEMENTS.length}`} />
+      </div>
+
+      <h2 className="mt-8 font-display text-2xl">Milestones</h2>
+      <p className="text-xs text-silver">
+        Every milestone pays a small pile of fictional bonus chips. None of it is real.
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        {ACHIEVEMENTS.map((a) => {
+          const done = state.achievements.includes(a.id);
+          return (
+            <div
+              key={a.id}
+              className={cn(
+                "surface p-3",
+                done ? "border-gold/50 bg-accent/40" : "opacity-60",
+              )}
+            >
+              <div className={cn("text-2xl", !done && "grayscale")}>{a.emoji}</div>
+              <div className="mt-1 text-xs leading-snug font-semibold text-platinum">{a.name}</div>
+              <div className="mt-0.5 text-[11px] leading-snug text-silver">{a.desc}</div>
+              <div className="mt-1 text-[11px] text-gold">
+                {done ? "Unlocked · " : "Reward · "}
+                +<Money usd={a.reward} short />
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <h2 className="mt-8 font-display text-2xl">Your possessions</h2>
