@@ -8,6 +8,7 @@ import { LANGUAGES, type LangCode } from "@/lib/i18n";
 import { AboutDialog } from "@/components/AboutDialog";
 import { CartButton, CartSheet } from "@/components/CartSheet";
 import { SiteFooter } from "@/components/SiteFooter";
+import { AchievementToasts } from "@/components/AchievementToasts";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
 
@@ -167,6 +168,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </nav>
 
+      <AchievementToasts />
       <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} />
       <CartSheet open={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
