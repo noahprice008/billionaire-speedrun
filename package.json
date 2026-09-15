@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build && node scripts/finalize-static-build.mjs",
     "build:dev": "vite build --mode development",
-    "preview": "vite preview --outDir dist",
+    "preview": "node scripts/preview-static.mjs",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
