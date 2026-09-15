@@ -9,9 +9,23 @@ import {
   type ReactNode,
 } from "react";
 import type { CurrencyCode } from "./currency";
+import {
+  ACHIEVEMENTS,
+  dailyBonusAmount,
+  daysBetween,
+  todayKey,
+  type Achievement,
+} from "./achievements";
 import { dictionaries, type LangCode, type StringKey } from "./i18n";
 
-export type OwnedItem = { id: string; name: string; image: string; price: number; category: string };
+export type OwnedItem = {
+  id: string;
+  name: string;
+  image: string;
+  price: number;
+  category: string;
+  rare?: boolean;
+};
 
 export type CartLine = OwnedItem & { qty: number };
 
@@ -20,8 +34,13 @@ export type EmpireState = {
   inventory: OwnedItem[];
   cart: CartLine[];
   winStreak: number;
+  bestStreak: number;
   gamesPlayed: number;
   biggestWin: number;
+  totalSpent: number;
+  achievements: string[];
+  bonusStreak: number;
+  lastBonusDate: string | null;
   currency: CurrencyCode;
   language: LangCode;
   sound: boolean;
@@ -34,8 +53,13 @@ const initialState: EmpireState = {
   inventory: [],
   cart: [],
   winStreak: 0,
+  bestStreak: 0,
   gamesPlayed: 0,
   biggestWin: 0,
+  totalSpent: 0,
+  achievements: [],
+  bonusStreak: 0,
+  lastBonusDate: null,
   currency: "USD",
   language: "en",
   sound: true,
@@ -50,6 +74,13 @@ type Ctx = {
   cartTotal: number;
   cartCount: number;
   t: (key: StringKey) => string;
+  unlocked: Achievement[];
+  locked: Achievement[];
+  pending: Achievement[];
+  dismissAchievement: (id: string) => void;
+  bonusReady: boolean;
+  nextBonusAmount: number;
+  claimDailyBonus: () => number;
   setCurrency: (c: CurrencyCode) => void;
   setLanguage: (l: LangCode) => void;
   setSound: (on: boolean) => void;
@@ -96,6 +127,7 @@ export function EmpireProvider({ children }: { children: ReactNode }) {
       balance: Math.max(0, s.balance + delta),
       gamesPlayed: s.gamesPlayed + 1,
       winStreak: won ? s.winStreak + 1 : 0,
+      bestStreak: won ? Math.max(s.bestStreak, s.winStreak + 1) : s.bestStreak,
       biggestWin: won ? Math.max(s.biggestWin, delta) : s.biggestWin,
     }));
   }, []);
@@ -108,6 +140,7 @@ export function EmpireProvider({ children }: { children: ReactNode }) {
       return {
         ...s,
         balance: s.balance - item.price,
+        totalSpent: s.totalSpent + item.price,
         inventory: [...s.inventory, { ...item, id: `${item.id}-${Date.now()}` }],
       };
     });
@@ -155,23 +188,96 @@ export function EmpireProvider({ children }: { children: ReactNode }) {
           image: l.image,
           price: l.price,
           category: l.category,
+          rare: l.rare,
         })),
       );
-      return { ...s, balance: s.balance - total, inventory: [...s.inventory, ...bought], cart: [] };
+      return {
+        ...s,
+        balance: s.balance - total,
+        totalSpent: s.totalSpent + total,
+        inventory: [...s.inventory, ...bought],
+        cart: [],
+      };
     });
     return ok;
   }, []);
 
+  const [pending, setPending] = useState<Achievement[]>([]);
+
+  const dismissAchievement = useCallback(
+    (id: string) => setPending((p) => p.filter((a) => a.id !== id)),
+    [],
+  );
+
+  const claimDailyBonus = useCallback(() => {
+    let amount = 0;
+    setState((s) => {
+      const today = todayKey();
+      if (s.lastBonusDate === today) return s;
+      const consecutive = s.lastBonusDate && daysBetween(s.lastBonusDate, today) === 1;
+      const day = consecutive ? s.bonusStreak + 1 : 1;
+      amount = dailyBonusAmount(day);
+      return {
+        ...s,
+        balance: s.balance + amount,
+        bonusStreak: day,
+        lastBonusDate: today,
+      };
+    });
+    return amount;
+  }, []);
+
   const reset = useCallback(() => {
+    setPending([]);
     setState((s) => ({ ...initialState, currency: s.currency, language: s.language, sound: s.sound }));
   }, []);
+
+  const netWorth = state.balance + state.inventory.reduce((a, i) => a + i.price, 0);
+
+  // Evaluate milestones after every state change and queue the new ones for a toast.
+  useEffect(() => {
+    if (!loaded.current) return;
+    const metrics = {
+      netWorth,
+      balance: state.balance,
+      gamesPlayed: state.gamesPlayed,
+      winStreak: state.winStreak,
+      bestStreak: state.bestStreak,
+      biggestWin: state.biggestWin,
+      itemsOwned: state.inventory.length,
+      totalSpent: state.totalSpent,
+      bonusStreak: state.bonusStreak,
+      rareOwned: state.inventory.filter((i) => i.rare).length,
+    };
+    const fresh = ACHIEVEMENTS.filter(
+      (a) => !state.achievements.includes(a.id) && a.test(metrics),
+    );
+    if (!fresh.length) return;
+    setPending((p) => [...p, ...fresh]);
+    setState((s) => ({
+      ...s,
+      achievements: [...s.achievements, ...fresh.map((a) => a.id)],
+      balance: s.balance + fresh.reduce((a, x) => a + x.reward, 0),
+    }));
+  }, [state, netWorth]);
 
   const value = useMemo<Ctx>(() => {
     const dict = dictionaries[state.language] ?? dictionaries.en;
     return {
       state,
       hydrated,
-      netWorth: state.balance + state.inventory.reduce((a, i) => a + i.price, 0),
+      netWorth,
+      unlocked: ACHIEVEMENTS.filter((a) => state.achievements.includes(a.id)),
+      locked: ACHIEVEMENTS.filter((a) => !state.achievements.includes(a.id)),
+      pending,
+      dismissAchievement,
+      bonusReady: state.lastBonusDate !== todayKey(),
+      nextBonusAmount: dailyBonusAmount(
+        state.lastBonusDate && daysBetween(state.lastBonusDate, todayKey()) === 1
+          ? state.bonusStreak + 1
+          : 1,
+      ),
+      claimDailyBonus,
       cartTotal: state.cart.reduce((a, l) => a + l.price * l.qty, 0),
       cartCount: state.cart.reduce((a, l) => a + l.qty, 0),
       t: (key) => dict[key] ?? dictionaries.en[key],
@@ -187,7 +293,7 @@ export function EmpireProvider({ children }: { children: ReactNode }) {
       checkout,
       reset,
     };
-  }, [state, hydrated, resolveGame, purchase, addToCart, removeFromCart, setQty, clearCart, checkout, reset]);
+  }, [state, hydrated, netWorth, pending, dismissAchievement, claimDailyBonus, resolveGame, purchase, addToCart, removeFromCart, setQty, clearCart, checkout, reset]);
 
   return <EmpireContext.Provider value={value}>{children}</EmpireContext.Provider>;
 }
