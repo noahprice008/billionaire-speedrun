@@ -47,6 +47,7 @@ function VaultPage() {
       image: item.image,
       price: item.price,
       category: item.category,
+      rare: item.rare,
     });
     playSound("click", state.sound);
     setBurst(item.id);

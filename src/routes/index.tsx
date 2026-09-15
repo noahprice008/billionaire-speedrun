@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ComponentType } from "react";
 import { AppShell } from "@/components/AppShell";
+import { DailyBonus } from "@/components/DailyBonus";
 import { CoinFlip, GoldenWheel, ScratchCards, VaultBoxes } from "@/components/games/EasyGames";
 import { HorseRacing, MemeCoin, Slots } from "@/components/games/SignatureGames";
 import { CardTable, Roulette } from "@/components/games/ClassicGames";
@@ -100,6 +101,10 @@ function CasinoPage() {
           ))}
         </div>
       </section>
+
+      <div className="mt-4">
+        <DailyBonus />
+      </div>
 
       {TIERS.map((tier) => (
         <section key={tier.title} className="mt-8">
