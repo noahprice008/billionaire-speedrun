@@ -20,11 +20,11 @@ export function DailyBonus() {
   return (
     <section className="surface relative overflow-hidden p-4 sm:p-5">
       {claimed !== null && <Particles />}
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
         <div className="grid size-12 shrink-0 place-items-center rounded-full border border-gold/50 bg-accent">
           <Gift className="size-6 text-gold-bright" />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 basis-[60%] sm:basis-auto">
           <h2 className="font-display text-xl text-gradient-gold">Daily chip drop</h2>
           <p className="text-xs text-silver">
             {bonusReady ? (
@@ -54,7 +54,7 @@ export function DailyBonus() {
               setTimeout(() => setClaimed(null), 2500);
             }
           }}
-          className="rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-obsidian transition-transform active:scale-[0.98] disabled:opacity-40"
+          className="ml-auto rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-obsidian transition-transform active:scale-[0.98] disabled:opacity-40"
         >
           {bonusReady ? "Claim chips" : "Claimed"}
         </button>
